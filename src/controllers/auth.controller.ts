@@ -55,7 +55,7 @@ export const inviteUser = async (req: Request, res: Response) => {
     // Get frontend URL from environment or fallback to localhost
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     
-    // Simulate email by console
+    // Log invite link for admin reference
     console.log(`Invite link: ${frontendUrl}/register/${token}`);
 
     res.status(201).json({ 
