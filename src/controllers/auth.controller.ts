@@ -52,10 +52,17 @@ export const inviteUser = async (req: Request, res: Response) => {
 
     const invite = await Invite.create({ email, role, token, expiresAt });
 
+    // Get frontend URL from environment or fallback to localhost
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    
     // Simulate email by console
-    console.log(`Invite link: http://localhost:5173/register/${token}`);
+    console.log(`Invite link: ${frontendUrl}/register/${token}`);
 
-    res.status(201).json({ message: "Invite created", token: invite.token });
+    res.status(201).json({ 
+      message: "Invite created", 
+      token: invite.token,
+      inviteLink: `${frontendUrl}/register/${token}`
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
