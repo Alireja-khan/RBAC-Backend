@@ -354,6 +354,9 @@ npm run test         # Run tests (if implemented)
 
 ## Deployment
 
+### Live Production URL
+**API Base URL**: https://rbac-backend-11.onrender.com
+
 ### Production Build
 ```bash
 npm run build
@@ -368,6 +371,7 @@ NODE_ENV=production
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database
 JWT_SECRET=your-production-jwt-secret-very-long-and-secure
 PORT=8080
+FRONTEND_URL=https://rbac-frontend-7u53.vercel.app
 ```
 
 ### Docker Deployment
@@ -383,6 +387,7 @@ CMD ["npm", "start"]
 ```
 
 ### Hosting Options
+- **Render** (Current): https://rbac-backend-11.onrender.com
 - **Heroku**: Direct deployment with environment variables
 - **AWS EC2**: Manual deployment with PM2 process manager
 - **Google Cloud Run**: Containerized deployment
