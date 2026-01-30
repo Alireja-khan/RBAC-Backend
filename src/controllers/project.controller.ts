@@ -12,7 +12,9 @@ export const createProject = async (req: Request, res: Response) => {
     createdBy: req.user.id,
   });
 
-  res.status(201).json(project);
+  const populatedProject = await Project.findById(project._id).populate('createdBy', 'name email role');
+
+  res.status(201).json(populatedProject);
 };
 
 
@@ -30,7 +32,7 @@ export const updateProject = async (req: Request, res: Response) => {
     req.params.id,
     req.body,
     { new: true }
-  );
+  ).populate('createdBy', 'name email role');
 
   if (!project) return res.status(404).json({ message: "Project not found" });
   res.json(project);

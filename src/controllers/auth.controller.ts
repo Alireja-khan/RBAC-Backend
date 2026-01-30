@@ -5,6 +5,38 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
+
+// --- 0️⃣ Validate Invite (PUBLIC) ---
+export const validateInvite = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+
+    const invite = await Invite.findOne({ token });
+
+    if (!invite) {
+      return res.status(400).json({ message: "Invalid invite token" });
+    }
+
+    if (invite.acceptedAt) {
+      return res.status(400).json({ message: "Invite already used" });
+    }
+
+    if (invite.expiresAt < new Date()) {
+      return res.status(400).json({ message: "Invite expired" });
+    }
+
+    res.status(200).json({
+      email: invite.email,
+      role: invite.role,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
 // --- 1️⃣ Admin Invite ---
 export const inviteUser = async (req: Request, res: Response) => {
   try {
@@ -57,7 +89,18 @@ export const registerViaInvite = async (req: Request, res: Response) => {
     invite.acceptedAt = new Date();
     await invite.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    // Generate JWT token (same as login)
+    const jwtToken = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1d" }
+    );
+
+    res.status(201).json({
+      message: "User registered successfully",
+      token: jwtToken,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, status: user.status }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
@@ -83,7 +126,7 @@ export const loginUser = async (req: Request, res: Response) => {
       expiresIn: "1d",
     });
 
-    res.status(200).json({ token, user: { id: user._id, name: user.name, role: user.role } });
+    res.status(200).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, status: user.status } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
