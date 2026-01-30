@@ -2,7 +2,7 @@ services:
   - type: web
     name: rbac-backend
     env: node
-    buildCommand: npm install && npx tsc
+    buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
